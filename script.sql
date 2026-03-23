@@ -43,8 +43,8 @@ CREATE TABLE reservations (
     end_date DATETIME NOT NULL,
     status ENUM('PENDING','CONFIRMED','CANCELLED') DEFAULT 'PENDING',
     expires_at DATETIME,
-    version INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     INDEX idx_user (user_id),
     INDEX idx_category (category_id, start_date, end_date)
 ) ENGINE=InnoDB;
