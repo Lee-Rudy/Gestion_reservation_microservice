@@ -1,6 +1,6 @@
 -- user-service
 CREATE TABLE users (
-    id CHAR(36) PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
@@ -10,7 +10,7 @@ CREATE TABLE users (
 
 -- auth-service
 CREATE TABLE auth_tokens (
-    id CHAR(36) PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     user_id CHAR(36) NOT NULL,
     access_token TEXT NOT NULL,
     refresh_token TEXT,
@@ -20,7 +20,7 @@ CREATE TABLE auth_tokens (
 ) ENGINE=InnoDB;
 
 CREATE TABLE logs (
-    id CHAR(36) PRIMARY KEY,               
+    id int PRIMARY KEY AUTO_INCREMENT,             
     correlation_id CHAR(36) NOT NULL,          
     action VARCHAR(50) NOT NULL,                  
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -29,16 +29,16 @@ CREATE TABLE logs (
 
 -- reservation-service
 CREATE TABLE categories (
-    id CHAR(36) PRIMARY KEY,
+    id int PRIMARY KEY AUTO_INCREMENT,
     name VARCHAR(100) NOT NULL,
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB;
 
 CREATE TABLE reservations (
-    id CHAR(36) PRIMARY KEY,
-    user_id CHAR(36) NOT NULL,
-    category_id CHAR(36) NOT NULL,
+    id int PRIMARY KEY AUTO_INCREMENT,
+    user_id int NOT NULL,
+    category_id int NOT NULL,
     start_date DATETIME NOT NULL,
     end_date DATETIME NOT NULL,
     status ENUM('PENDING','CONFIRMED','CANCELLED') DEFAULT 'PENDING',
@@ -50,7 +50,7 @@ CREATE TABLE reservations (
 ) ENGINE=InnoDB;
 
 CREATE TABLE logs (
-    id CHAR(36) PRIMARY KEY,               
+    id int PRIMARY KEY AUTO_INCREMENT,             
     correlation_id CHAR(36) NOT NULL,          
     action VARCHAR(50) NOT NULL,                  
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -58,9 +58,9 @@ CREATE TABLE logs (
 ) ENGINE=InnoDB;
 
 CREATE TABLE notification_reservation (
-    id CHAR(36) PRIMARY KEY,
-    reservation_id CHAR(36) NOT NULL,
-    user_id CHAR(36) NOT NULL,
+    id int PRIMARY KEY AUTO_INCREMENT,
+    reservation_id int NOT NULL,
+    user_id int NOT NULL,
     type ENUM('RESERVATION') DEFAULT 'RESERVATION',
     content TEXT,
     status ENUM('PENDING','SENT','FAILED') DEFAULT 'PENDING',
@@ -72,8 +72,8 @@ CREATE TABLE notification_reservation (
 
 -- payment-service
 CREATE TABLE payments (
-    id CHAR(36) PRIMARY KEY,
-    reservation_id CHAR(36) NOT NULL,
+    id int PRIMARY KEY AUTO_INCREMENT,
+    reservation_id int NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
     status ENUM('PENDING','SUCCESS','FAILED') DEFAULT 'PENDING',
     payment_method VARCHAR(50),
@@ -83,7 +83,7 @@ CREATE TABLE payments (
 ) ENGINE=InnoDB;
 
 CREATE TABLE logs (
-    id CHAR(36) PRIMARY KEY,               
+    id int PRIMARY KEY AUTO_INCREMENT,               
     correlation_id CHAR(36) NOT NULL,          
     action VARCHAR(50) NOT NULL,                  
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -91,9 +91,9 @@ CREATE TABLE logs (
 ) ENGINE=InnoDB;
 
 CREATE TABLE notification_payment (
-    id CHAR(36) PRIMARY KEY,
-    payment_id CHAR(36) NOT NULL,
-    user_id CHAR(36) NOT NULL,
+    id int PRIMARY KEY AUTO_INCREMENT,
+    payment_id int NOT NULL,
+    user_id int NOT NULL,
     type ENUM('PAYMENT') DEFAULT 'PAYMENT',
     content TEXT,
     status ENUM('PENDING','SENT','FAILED') DEFAULT 'PENDING',
