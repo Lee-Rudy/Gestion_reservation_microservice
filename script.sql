@@ -20,11 +20,17 @@ CREATE TABLE auth_tokens (
 ) ENGINE=InnoDB;
 
 -- reservation-service
+CREATE TABLE categories (
+    id CHAR(36) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
 CREATE TABLE reservations (
     id CHAR(36) PRIMARY KEY,
     user_id CHAR(36) NOT NULL,
-    resource_id CHAR(36) NOT NULL,
-    resource_type VARCHAR(50) NOT NULL,
+    category_id CHAR(36) NOT NULL,
     start_date DATETIME NOT NULL,
     end_date DATETIME NOT NULL,
     status ENUM('PENDING','CONFIRMED','CANCELLED') DEFAULT 'PENDING',
@@ -32,7 +38,7 @@ CREATE TABLE reservations (
     version INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_user (user_id),
-    INDEX idx_resource (resource_id, start_date, end_date)
+    INDEX idx_category (category_id, start_date, end_date)
 ) ENGINE=InnoDB;
 
 CREATE TABLE notification_reservation (
