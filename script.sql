@@ -19,6 +19,14 @@ CREATE TABLE auth_tokens (
     INDEX idx_user_id (user_id)
 ) ENGINE=InnoDB;
 
+CREATE TABLE logs (
+    id CHAR(36) PRIMARY KEY,               
+    correlation_id CHAR(36) NOT NULL,          
+    action VARCHAR(50) NOT NULL,                  
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_correlation (correlation_id) 
+) ENGINE=InnoDB;
+
 -- reservation-service
 CREATE TABLE categories (
     id CHAR(36) PRIMARY KEY,
@@ -39,6 +47,14 @@ CREATE TABLE reservations (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_user (user_id),
     INDEX idx_category (category_id, start_date, end_date)
+) ENGINE=InnoDB;
+
+CREATE TABLE logs (
+    id CHAR(36) PRIMARY KEY,               
+    correlation_id CHAR(36) NOT NULL,          
+    action VARCHAR(50) NOT NULL,                  
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_correlation (correlation_id) 
 ) ENGINE=InnoDB;
 
 CREATE TABLE notification_reservation (
@@ -64,6 +80,14 @@ CREATE TABLE payments (
     transaction_id VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_reservation (reservation_id)
+) ENGINE=InnoDB;
+
+CREATE TABLE logs (
+    id CHAR(36) PRIMARY KEY,               
+    correlation_id CHAR(36) NOT NULL,          
+    action VARCHAR(50) NOT NULL,                  
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_correlation (correlation_id) 
 ) ENGINE=InnoDB;
 
 CREATE TABLE notification_payment (
