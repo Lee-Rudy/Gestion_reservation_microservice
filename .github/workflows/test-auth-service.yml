@@ -1,0 +1,107 @@
+name: Test auth-service
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'auth-service/**'
+      - '.github/workflows/test-auth-service.yml'
+  pull_request:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'auth-service/**'
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    name: Quality checks
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Install dependencies
+        run: |
+          cd auth-service
+          poetry install
+
+      - name: Format check with black
+        run: |
+          cd auth-service
+          poetry run black --check src/ tests/
+
+      - name: Lint with flake8
+        run: |
+          cd auth-service
+          poetry run flake8 src/ tests/ --max-line-length=88 --ignore=E203,W503
+
+      - name: Type check with mypy
+        run: |
+          cd auth-service
+          poetry run mypy src/ --ignore-missing-imports
+
+  test:
+    needs: quality
+    runs-on: ubuntu-latest
+    name: Tests & Coverage
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13'
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Cache Poetry dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pypoetry
+          key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-poetry-
+
+      - name: Install dependencies
+        run: |
+          cd auth-service
+          poetry install
+
+      - name: Run tests with coverage
+        run: |
+          cd auth-service
+          poetry run pytest -v \
+            --cov=src \
+            --cov-report=term-missing \
+            --cov-report=html \
+            --cov-fail-under=80
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          files: ./auth-service/htmlcov/
+          flags: auth-service
+          fail_ci_if_error: false
