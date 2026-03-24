@@ -17,5 +17,5 @@ docker compose run --rm test
 Pour tester un autre service :
 
 ```bash
-TEST_SERVICE=auth-service docker compose run --rm test
+docker compose run --rm auth-service poetry run pytest -v --cov=src --cov-report=term-missing --cov-report=html --cov-fail-under=80
 ```
