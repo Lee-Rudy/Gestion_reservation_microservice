@@ -1,8 +1,10 @@
 class Category:
-    def __init__(self, name: str, description: str):
+    def __init__(self, name: str, description: str, id: int = None):
+        self._id = id
         self._validate_name(name)
         self._validate_description(description)
 
+        self.id = id
         self.name = name.strip()
         self.description = description.strip() if description else ""
 
@@ -17,5 +19,5 @@ class Category:
             raise ValueError("Le nom de la catégorie doit contenir moins de 100 caractères")
 
     def _validate_description(self, description: str):
-        if description and len(description.strip()) > 10:
-            raise ValueError("La description doit contenir moins de 10 caractères")
+        if description and len(description.strip()) > 100:
+            raise ValueError("La description doit contenir moins de 100 caractères")
