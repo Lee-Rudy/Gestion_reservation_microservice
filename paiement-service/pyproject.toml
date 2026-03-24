@@ -8,7 +8,14 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.30.0",
 ]
+
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.0.0"
+pytest-cov = ">=5.0.0"
+httpx = ">=0.27.0"
 
 [tool.poetry]
 packages = [{include = "paiement_service", from = "src"}]
