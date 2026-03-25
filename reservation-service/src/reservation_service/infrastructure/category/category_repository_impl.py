@@ -1,7 +1,7 @@
 import mysql.connector
-from infrastructure.database.database import get_connection
-from domain.category.category_repository import CategoryRepository
-from domain.category.category import Category
+from reservation_service.infrastructure.database.database import get_connection
+from reservation_service.domain.category.category_repository import CategoryRepository
+from reservation_service.domain.category.category import Category
 
 class CategoryRepositoryImpl(CategoryRepository):
 

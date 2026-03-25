@@ -1,4 +1,4 @@
-from domain.category.category import Category
+from reservation_service.domain.category.category import Category
 class CategoryUseCase:
     def __init__(self, category_repository):
         self.category_repository = category_repository

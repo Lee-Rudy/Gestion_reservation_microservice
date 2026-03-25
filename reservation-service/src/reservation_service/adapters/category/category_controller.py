@@ -1,8 +1,8 @@
 # adapters/category_controller.py
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from application.category.use_case import CategoryUseCase
-from domain.category.category import Category
+from reservation_service.application.category.use_case import CategoryUseCase
+from reservation_service.domain.category.category import Category
 
 router = APIRouter()
 
