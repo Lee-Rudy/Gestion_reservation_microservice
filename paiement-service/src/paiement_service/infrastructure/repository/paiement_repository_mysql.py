@@ -15,7 +15,7 @@ Table attendue (voir migrations/paiements.sql) :
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Optional
+from typing import Any, Optional
 from uuid import UUID
 
 from paiement_service.application.ports import IPaiementRepository
@@ -104,7 +104,7 @@ class PaiementRepositoryMySQL(IPaiementRepository):
     # ─── Helpers privés ───────────────────────────────────────────────────────
 
     @staticmethod
-    def _ligne_vers_entite(row: dict) -> Paiement:
+    def _ligne_vers_entite(row: Any) -> Paiement:
         """Convertit une ligne MySQL (dict) en entité Paiement du domaine.
 
         Gère la conversion de types :
