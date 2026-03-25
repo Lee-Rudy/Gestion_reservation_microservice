@@ -2,8 +2,11 @@
 Point d'entrée du service de paiement.
 
 Initialise l'application FastAPI, instancie les adaptateurs secondaires
-(repository en mémoire, fournisseur simulé) et enregistre le routeur
-des paiements avec injection de dépendances.
+et enregistre le routeur des paiements avec injection de dépendances.
+
+Sélection du repository (variable d'environnement USE_DATABASE) :
+    USE_DATABASE=true  → PaiementRepositoryMySQL  (production)
+    USE_DATABASE=false → PaiementRepositoryEnMemoire (défaut / tests)
 
 Architecture hexagonale :
     - Les adaptateurs secondaires (repository, fournisseur) sont créés ici.
@@ -11,11 +14,14 @@ Architecture hexagonale :
     - Le domaine et les use cases ne connaissent jamais ces implémentations.
 """
 
+import os
+
 from fastapi import FastAPI
 
 from paiement_service.adapters.http_controller import creer_router
 from paiement_service.adapters.payment_provider import FournisseurPaiementSimule
 from paiement_service.adapters.repository import PaiementRepositoryEnMemoire
+from paiement_service.application.ports import IPaiementRepository
 
 app = FastAPI(
     title="gestion_microservice",
@@ -43,9 +49,24 @@ def root() -> dict[str, str]:
     return build_status()
 
 
-# ─── Composition root ────────────────────────────────────────────────────────
-# Instanciation des adaptateurs secondaires (driven/right side de l'hexagone)
-_repository = PaiementRepositoryEnMemoire()
+# ─── Composition root ─────────────────────────────────────────────────────────
+# Sélection du repository selon la configuration d'environnement.
+# USE_DATABASE=true active le repository MySQL (production).
+# Par défaut, le repository en mémoire est utilisé (développement / tests).
+
+
+def _creer_repository() -> IPaiementRepository:
+    """Instancie le repository adapté à l'environnement courant."""
+    if os.getenv("USE_DATABASE", "false").lower() == "true":
+        from paiement_service.infrastructure.repository import (  # noqa: PLC0415
+            paiement_repository_mysql as _mysql,
+        )
+
+        return _mysql.PaiementRepositoryMySQL()
+    return PaiementRepositoryEnMemoire()
+
+
+_repository = _creer_repository()
 _fournisseur = FournisseurPaiementSimule()
 
 # Enregistrement du routeur avec les dépendances injectées
