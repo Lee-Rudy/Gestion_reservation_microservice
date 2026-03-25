@@ -183,9 +183,7 @@ class TestRembourserPaiement:
     ) -> None:
         """Si le PSP refuse le remboursement, l'API doit retourner 422."""
         paiement_id = self._creer_et_valider(client_remboursement_ko)
-        response = client_remboursement_ko.post(
-            f"/paiements/{paiement_id}/rembourser"
-        )
+        response = client_remboursement_ko.post(f"/paiements/{paiement_id}/rembourser")
         assert response.status_code == 422
 
 

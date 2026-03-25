@@ -53,18 +53,14 @@ class RequeteInitierPaiement(BaseModel):
     reservation_id: UUID = Field(
         ..., description="Identifiant UUID de la réservation à payer"
     )
-    montant: Decimal = Field(
-        ..., gt=0, description="Montant à payer (ex : 49.99)"
-    )
+    montant: Decimal = Field(..., gt=0, description="Montant à payer (ex : 49.99)")
     devise: str = Field(
         ...,
         min_length=3,
         max_length=3,
         description="Code ISO 4217 de la devise (ex : EUR, USD, GBP)",
     )
-    methode: MethodePaiement = Field(
-        ..., description="Méthode de paiement choisie"
-    )
+    methode: MethodePaiement = Field(..., description="Méthode de paiement choisie")
 
 
 class ReponsePaiement(BaseModel):
@@ -203,7 +199,7 @@ def creer_router(
         "/{paiement_id}",
         response_model=ReponsePaiement,
         summary="Obtenir un paiement",
-        description="Récupère le détail complet d'un paiement par son identifiant UUID.",
+        description="Récupère le détail complet d'un paiement par son identifiant.",
     )
     def obtenir_paiement(paiement_id: UUID) -> ReponsePaiement:
         """Retourne les informations d'un paiement."""

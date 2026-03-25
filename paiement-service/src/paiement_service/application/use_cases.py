@@ -210,9 +210,7 @@ class RembourserPaiementUseCase:
         # 3. Demande de remboursement au PSP
         succes = self._fournisseur.rembourser(paiement)
         if not succes:
-            raise ValueError(
-                "Le fournisseur de paiement a refusé le remboursement."
-            )
+            raise ValueError("Le fournisseur de paiement a refusé le remboursement.")
 
         # 4. Transition d'état et persistance
         paiement.rembourser()

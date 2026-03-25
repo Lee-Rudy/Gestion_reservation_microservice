@@ -104,7 +104,8 @@ class Paiement:
         """
         if self.statut != StatutPaiement.VALIDE:
             raise ValueError(
-                f"Impossible de rembourser un paiement au statut '{self.statut.value}'. "
+                f"Impossible de rembourser un paiement au statut "
+                f"'{self.statut.value}'. "
                 "Seuls les paiements VALIDES peuvent être remboursés."
             )
         self.statut = StatutPaiement.REMBOURSE
