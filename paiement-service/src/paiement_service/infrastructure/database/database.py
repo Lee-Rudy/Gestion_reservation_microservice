@@ -15,10 +15,9 @@ Variables d'environnement reconnues :
 import os
 
 import mysql.connector
-from mysql.connector.abstracts import MySQLConnectionAbstract
 
 
-def get_connection() -> MySQLConnectionAbstract:
+def get_connection():
     """Retourne une nouvelle connexion MySQL à partir des variables d'env.
 
     Chaque appel crée une connexion fraîche. L'appelant est responsable
