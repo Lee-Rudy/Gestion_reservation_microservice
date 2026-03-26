@@ -36,8 +36,24 @@ services:
     container_name: reservation_service
     ports:
       - "8003:8003"
+    environment:
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=reservation_db
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: reservation_db
+    ports:
+      - "3306:3306"
     volumes:
-      - ./reservation-service:/src
+      - mysql-data:/var/lib/mysql
 
   paiement-service:
     build:
@@ -59,3 +75,6 @@ services:
       - ./htmlcov:/src/htmlcov
     environment:
       - PYTHONPATH=/src
+
+volumes:
+  mysql-data:
