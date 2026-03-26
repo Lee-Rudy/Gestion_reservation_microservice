@@ -76,6 +76,22 @@ class ReservationRepositoryImpl(ReservationRepository):
         cursor.close()
         conn.close()
         
+    def update_status(self, id: int, status) -> None:
+        """Met à jour uniquement le statut d'une réservation en base.
+
+        Requête ciblée : évite de recharger l'entité complète et de
+        déclencher les validations de dates (utile pour le Saga).
+        """
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE reservations SET status=%s WHERE id=%s",
+            (status.value, id)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
     def find_by_id(self, id: int) -> Reservation:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
