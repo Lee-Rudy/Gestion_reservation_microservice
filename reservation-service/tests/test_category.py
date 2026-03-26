@@ -8,7 +8,6 @@ Couvre :
 """
 
 from typing import Optional
-from unittest.mock import MagicMock
 
 import importlib
 

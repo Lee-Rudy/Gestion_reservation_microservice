@@ -163,14 +163,16 @@ class TestSagaPaiementSucces:
         assert result["paiement_status"] == "valide"
 
     def test_resultat_contient_reservation_id_et_paiement_id(self):
-        """La réponse doit contenir les identifiants de la réservation et du paiement."""
+        """La réponse doit contenir les identifiants de la réservation
+        et du paiement."""
         result = self.saga.executer(_build_reservation(), "EUR", "carte")
         assert "reservation_id" in result
         assert "paiement_id" in result
         assert result["reservation_id"] is not None
 
     def test_coherence_etat_reservation_en_base(self):
-        """La réservation en base doit bien être CONFIRMED (pas seulement dans la réponse)."""
+        """La réservation en base doit bien être CONFIRMED
+        (pas seulement dans la réponse)."""
         saga_with_repo = _build_saga(PaiementServiceMockOK())
         # On accède au repository via le service pour vérifier l'état réel
         repo = saga_with_repo.reservation_service.repository

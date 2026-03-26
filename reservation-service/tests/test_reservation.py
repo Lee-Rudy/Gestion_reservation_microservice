@@ -19,7 +19,6 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from reservation_service.application.reservation.quote_service import QuoteService
 from reservation_service.application.reservation.use_case import ReservationUseCase
-from reservation_service.domain.category.category import Category
 from reservation_service.domain.reservation.reservation import Reservation
 from reservation_service.domain.reservation.reservation_repository import (
     ReservationRepository,

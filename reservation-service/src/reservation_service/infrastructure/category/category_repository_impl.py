@@ -1,4 +1,3 @@
-import mysql.connector
 from reservation_service.infrastructure.database.database import get_connection
 from reservation_service.domain.category.category_repository import CategoryRepository
 from reservation_service.domain.category.category import Category

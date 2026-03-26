@@ -1,4 +1,3 @@
-from enum import Enum
 from .reservation_status import ReservationStatus
 from datetime import datetime
 
@@ -71,10 +70,10 @@ class Reservation:
 
     def _validate_status(self, status: ReservationStatus):
         if not isinstance(status, ReservationStatus):
-            raise ValueError(
-                "Le statut de la réservation doit être une instance de ReservationStatus"
-            )
+            msg = "Le statut doit être une instance de ReservationStatus"
+            raise ValueError(msg)
 
     def _validate_expires_at(self, expires_at: str):
         if expires_at and expires_at <= self._current_date():
-            raise ValueError("La date d'expiration doit être dans le futur")
+            msg = "La date d'expiration doit être dans le futur"
+            raise ValueError(msg)

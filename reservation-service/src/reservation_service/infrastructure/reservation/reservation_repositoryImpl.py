@@ -22,7 +22,8 @@ class ReservationRepositoryImpl(ReservationRepository):
 
         if reservation.id is None:
             query = """
-            INSERT INTO reservations (user_id, category_id, start_date, end_date, status, nb_persons)
+            INSERT INTO reservations
+            (user_id, category_id, start_date, end_date, status, nb_persons)
             VALUES (%s, %s, %s, %s, %s, %s)
             """
             cursor.execute(
@@ -41,7 +42,8 @@ class ReservationRepositoryImpl(ReservationRepository):
         else:
             query = """
             UPDATE reservations
-            SET user_id=%s, category_id=%s, start_date=%s, end_date=%s, status=%s, nb_persons=%s
+            SET user_id=%s, category_id=%s, start_date=%s, end_date=%s,
+            status=%s, nb_persons=%s
             WHERE id=%s
             """
             cursor.execute(
