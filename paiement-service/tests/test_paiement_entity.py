@@ -122,5 +122,3 @@ def test_rembourser_paiement_valide_change_statut() -> None:
     paiement.valider()
     paiement.rembourser()
     assert paiement.statut == StatutPaiement.REMBOURSE
-
-
