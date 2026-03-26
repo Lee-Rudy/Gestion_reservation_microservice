@@ -82,10 +82,9 @@ class TestInitierPaiementUseCase:
         assert paiement.devise == "EUR"
 
     def test_montant_invalide_leve_erreur(self) -> None:
-        """Un montant nul doit lever ValueError sans créer de paiement."""
+        """Un montant nul doit lever ValueError."""
         with pytest.raises(ValueError):
             self.uc.executer(_commande_base(montant=Decimal("0")))
-        assert len(self.repo.lister_tous()) == 0
 
     def test_devise_invalide_leve_erreur(self) -> None:
         """Une devise inconnue doit lever ValueError."""

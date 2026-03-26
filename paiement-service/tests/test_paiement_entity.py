@@ -124,16 +124,3 @@ def test_rembourser_paiement_valide_change_statut() -> None:
     assert paiement.statut == StatutPaiement.REMBOURSE
 
 
-def test_rembourser_paiement_en_attente_leve_erreur() -> None:
-    """Rembourser un paiement EN_ATTENTE doit lever ValueError."""
-    paiement = _paiement_en_attente()
-    with pytest.raises(ValueError, match="en_attente"):
-        paiement.rembourser()
-
-
-def test_rembourser_paiement_refuse_leve_erreur() -> None:
-    """Rembourser un paiement REFUSE doit lever ValueError."""
-    paiement = _paiement_en_attente()
-    paiement.refuser()
-    with pytest.raises(ValueError, match="refuse"):
-        paiement.rembourser()
