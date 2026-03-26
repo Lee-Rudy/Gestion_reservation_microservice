@@ -365,6 +365,7 @@ files = [
 ]
 
 [[package]]
+<<<<<<< HEAD
 name = "mysql-connector-python"
 version = "8.4.0"
 description = "MySQL driver written in Python"
@@ -407,6 +408,8 @@ gssapi = ["gssapi (>=1.6.9,<=1.8.2)"]
 opentelemetry = ["Deprecated (>=1.2.6)", "typing-extensions (>=3.7.4)", "zipp (>=0.5)"]
 
 [[package]]
+=======
+>>>>>>> develop
 name = "packaging"
 version = "26.0"
 description = "Core utilities for Python packages"
@@ -1077,4 +1080,8 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.13"
+<<<<<<< HEAD
 content-hash = "3539f58ce5bcbae27a96545bf71422de903aecdf478b7f622dfdaf3669f36de1"
+=======
+content-hash = "e74ce2b316fe1976b64ffcc0116b8498dcbee7586e336015f4331449552866e9"
+>>>>>>> develop

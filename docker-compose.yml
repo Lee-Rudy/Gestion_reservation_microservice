@@ -1,0 +1,61 @@
+services:
+  api:
+    build:
+      context: ./api-gateway
+      dockerfile: Dockerfile
+    container_name: api_gateway
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api-gateway:/src
+
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    container_name: auth_service
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./auth-service:/src
+
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    container_name: user_service
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./user-service:/src
+
+  reservation-service:
+    build:
+      context: ./reservation-service
+      dockerfile: Dockerfile
+    container_name: reservation_service
+    ports:
+      - "8003:8003"
+    volumes:
+      - ./reservation-service:/src
+
+  paiement-service:
+    build:
+      context: ./paiement-service
+      dockerfile: Dockerfile
+    container_name: paiement_service
+    ports:
+      - "8004:8004"
+    volumes:
+      - ./paiement-service:/src
+
+  test:
+    build:
+      context: ./${TEST_SERVICE:-api-gateway}
+      dockerfile: Dockerfile.test
+    container_name: microservices_tests
+    volumes:
+      - ./${TEST_SERVICE:-api-gateway}:/src
+      - ./htmlcov:/src/htmlcov
+    environment:
+      - PYTHONPATH=/src
