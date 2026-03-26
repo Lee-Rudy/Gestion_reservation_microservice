@@ -67,6 +67,9 @@ class SagaReservationPaiementUseCase:
         # ── Étape 1 : Créer la réservation (statut PENDING) ──────────────
         # La disponibilité est vérifiée par ReservationService.
         reservation = self.reservation_service.create_reservation(reservation)
+        assert (
+            reservation.id is not None
+        ), "Reservation.id should not be None after save"
 
         try:
             # ── Étape 2 : Calculer le montant via le QuoteService ─────────

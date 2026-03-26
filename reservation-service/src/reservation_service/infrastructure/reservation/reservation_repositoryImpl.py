@@ -4,6 +4,7 @@ from reservation_service.domain.reservation.reservation_repository import (
 )
 from reservation_service.infrastructure.database.database import get_connection
 from reservation_service.domain.reservation.reservation_status import ReservationStatus
+from typing import Optional
 
 
 class ReservationRepositoryImpl(ReservationRepository):
@@ -104,7 +105,7 @@ class ReservationRepositoryImpl(ReservationRepository):
         cursor.close()
         conn.close()
 
-    def find_by_id(self, id: int) -> Reservation:
+    def find_by_id(self, id: int) -> Optional[Reservation]:
         conn = get_connection()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM reservations WHERE id=%s", (id,))
