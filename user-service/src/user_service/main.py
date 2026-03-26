@@ -1,25 +1,24 @@
 from fastapi import FastAPI
 
+from user_service.infrastructure.api.routes import router as user_router
+from user_service.infrastructure.database.database import Base, engine
+
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI(
-    title="gestion_microservice",
+    title="User Service API",
     version="0.1.0",
+    description="Service de gestion des utilisateurs (CRUD complet)",
 )
 
-
-def build_status() -> dict[str, str]:
-    """Generate API status response.
-
-    Returns:
-        Dict containing the API status.
-    """
-    return {"status": "user-service"}
+app.include_router(user_router)
 
 
 @app.get("/")
-def root() -> dict[str, str]:
-    """Root endpoint returning API health status.
+def root():
+    return {"status": "user-service"}
 
-    Returns:
-        Dict with status information.
-    """
-    return build_status()
+
+@app.get("/health")
+def health():
+    return {"status": "healthy"}

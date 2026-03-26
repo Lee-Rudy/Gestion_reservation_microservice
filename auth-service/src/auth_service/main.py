@@ -1,25 +1,24 @@
 from fastapi import FastAPI
 
+from auth_service.infrastructure.api.routes import router as auth_router
+from auth_service.infrastructure.database.database import Base, engine
+
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI(
-    title="gestion_microservice",
+    title="Auth Service API",
     version="0.1.0",
+    description="Service d'authentification avec JWT",
 )
 
-
-def build_status() -> dict[str, str]:
-    """Generate API status response.
-
-    Returns:
-        Dict containing the API status.
-    """
-    return {"status": "auth-service"}
+app.include_router(auth_router)
 
 
 @app.get("/")
-def root() -> dict[str, str]:
-    """Root endpoint returning API health status.
+def root():
+    return {"status": "auth-service"}
 
-    Returns:
-        Dict with status information.
-    """
-    return build_status()
+
+@app.get("/health")
+def health():
+    return {"status": "healthy"}

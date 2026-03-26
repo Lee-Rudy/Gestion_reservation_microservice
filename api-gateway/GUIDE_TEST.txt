@@ -1,0 +1,317 @@
+================================================================================
+GUIDE DE TEST - MICROSERVICES GESTION RESERVATION
+================================================================================
+
+IMPORTANT : Les services auth-service (8001) et user-service (8002) travaillent
+ensemble mais sont INDEPENDANTS.
+
+================================================================================
+ETAPE 1 : DEMARRER LES SERVICES AVEC DOCKER
+================================================================================
+
+1. Ouvrir un terminal dans le dossier racine du projet
+2. Executer :
+
+   docker compose up auth-service user-service --build -d
+
+3. Verifier que les services sont demarres :
+
+   docker ps
+
+   Vous devez voir :
+   - auth_service sur port 8001
+   - user_service sur port 8002
+
+4. Verifier les logs si probleme :
+
+   docker logs auth_service
+   docker logs user_service
+
+================================================================================
+ETAPE 2 : INITIALISER LES BASES DE DONNEES
+================================================================================
+
+Chaque service a sa propre base de donnees SQLite.
+
+Pour auth-service :
+   docker exec -it auth_service python init_db.py
+
+Pour user-service :
+   docker exec -it user_service python init_db.py
+
+Cela cree 2 utilisateurs de test dans CHAQUE base :
+- user@example.com / User@123 (role: USER)
+- admin@example.com / Admin@123 (role: ADMIN)
+
+================================================================================
+ETAPE 3 : TESTER USER-SERVICE (PORT 8002)
+================================================================================
+
+Ouvrir dans le navigateur : http://localhost:8002/docs
+
+3.1 - LISTER LES UTILISATEURS
+------------------------------
+1. Cliquer sur "GET /users/"
+2. Cliquer "Try it out"
+3. Cliquer "Execute"
+4. Vous voyez les 2 utilisateurs de test
+
+3.2 - CREER UN NOUVEL UTILISATEUR
+----------------------------------
+1. Cliquer sur "POST /users/"
+2. Cliquer "Try it out"
+3. Remplir le formulaire :
+
+   {
+     "name": "Jean Dupont",
+     "email": "jean@example.com",
+     "password": "Secure@123",
+     "role": "USER"
+   }
+
+4. Cliquer "Execute"
+5. Copier l'ID retourne (ex: id: 3)
+
+3.3 - RECUPERER UN UTILISATEUR
+-------------------------------
+1. Cliquer sur "GET /users/{user_id}"
+2. Cliquer "Try it out"
+3. Entrer l'ID (ex: 1)
+4. Cliquer "Execute"
+
+3.4 - MODIFIER UN UTILISATEUR
+------------------------------
+1. Cliquer sur "PUT /users/{user_id}"
+2. Cliquer "Try it out"
+3. Entrer l'ID (ex: 3)
+4. Modifier les champs souhaites :
+
+   {
+     "name": "Jean Dupont Modifie",
+     "role": "ADMIN"
+   }
+
+5. Cliquer "Execute"
+
+3.5 - SUPPRIMER UN UTILISATEUR
+-------------------------------
+1. Cliquer sur "DELETE /users/{user_id}"
+2. Cliquer "Try it out"
+3. Entrer l'ID (ex: 3)
+4. Cliquer "Execute"
+
+================================================================================
+ETAPE 4 : TESTER AUTH-SERVICE (PORT 8001)
+================================================================================
+
+Ouvrir dans le navigateur : http://localhost:8001/docs
+
+4.1 - SE CONNECTER (OBTENIR UN JWT)
+------------------------------------
+1. Cliquer sur "POST /auth/login"
+2. Cliquer "Try it out"
+3. IMPORTANT : Remplir le formulaire avec :
+
+   username: admin@example.com
+   password: Admin@123
+
+   OU
+
+   username: user@example.com
+   password: User@123
+
+4. Cliquer "Execute"
+5. COPIER le "access_token" retourne (c'est le JWT)
+
+Exemple de reponse :
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer"
+}
+
+4.2 - VERIFIER LE TOKEN JWT
+----------------------------
+1. Cliquer sur le bouton "Authorize" en haut a droite de Swagger
+2. Coller le token dans le champ "Value"
+3. Cliquer "Authorize"
+4. Cliquer "Close"
+
+Maintenant tester l'endpoint protege :
+1. Cliquer sur "GET /auth/verify"
+2. Cliquer "Try it out"
+3. Cliquer "Execute"
+4. Vous voyez l'email et le role de l'utilisateur
+
+================================================================================
+ETAPE 5 : WORKFLOW COMPLET (USER-SERVICE + AUTH-SERVICE)
+================================================================================
+
+Scenario : Creer un utilisateur puis s'authentifier avec
+
+5.1 - CREER UN UTILISATEUR (PORT 8002)
+---------------------------------------
+http://localhost:8002/docs
+
+POST /users/
+{
+  "name": "Marie Martin",
+  "email": "marie@example.com",
+  "password": "Marie@2024",
+  "role": "USER"
+}
+
+5.2 - ATTENDRE LA SYNCHRONISATION
+----------------------------------
+PROBLEME ACTUEL : Les deux services ont des bases SEPAREES.
+L'utilisateur cree dans user-service (8002) N'EXISTE PAS dans auth-service (8001).
+
+SOLUTION : Il faut synchroniser les bases OU utiliser une seule base partagee.
+
+Pour l'instant, vous pouvez seulement vous authentifier avec les utilisateurs
+crees par init_db.py dans auth-service :
+- user@example.com / User@123
+- admin@example.com / Admin@123
+
+5.3 - S'AUTHENTIFIER (PORT 8001)
+---------------------------------
+http://localhost:8001/docs
+
+POST /auth/login
+username: admin@example.com
+password: Admin@123
+
+================================================================================
+ETAPE 6 : RESOUDRE "Ce site est inaccessible"
+================================================================================
+
+Si vous ne pouvez pas acceder a http://localhost:8002 :
+
+1. Verifier que le conteneur est demarre :
+   docker ps
+
+2. Verifier les logs :
+   docker logs user_service
+
+3. Redemarrer les services :
+   docker compose down
+   docker compose up auth-service user-service --build -d
+
+4. Verifier que le port 8002 n'est pas utilise par un autre processus :
+   netstat -ano | findstr :8002
+
+5. Si le port est utilise, arreter le processus ou changer le port dans
+   docker-compose.yml
+
+================================================================================
+ETAPE 7 : REMPLIR LES FORMULAIRES SWAGGER
+================================================================================
+
+7.1 - FORMULAIRE POST /auth/login (OAuth2)
+-------------------------------------------
+Ce formulaire utilise OAuth2, donc :
+- Le champ "username" = votre EMAIL (pas un nom d'utilisateur)
+- Le champ "password" = votre mot de passe
+
+Exemple CORRECT :
+username: admin@example.com
+password: Admin@123
+
+Exemple INCORRECT :
+username: admin
+password: Admin@123
+
+7.2 - FORMULAIRE POST /users/ (JSON)
+-------------------------------------
+Ce formulaire attend du JSON. Tous les champs sont requis :
+
+{
+  "name": "Prenom Nom",           <- string, requis
+  "email": "email@example.com",   <- email valide, requis
+  "password": "Pass@123",         <- min 6 car, maj+min+chiffre+special, requis
+  "role": "USER"                  <- "USER" ou "ADMIN", defaut: "USER"
+}
+
+7.3 - FORMULAIRE PUT /users/{user_id} (JSON)
+---------------------------------------------
+Tous les champs sont OPTIONNELS. N'envoyez que ce que vous voulez modifier :
+
+{
+  "name": "Nouveau Nom"
+}
+
+OU
+
+{
+  "name": "Nouveau Nom",
+  "email": "nouveau@example.com",
+  "role": "ADMIN"
+}
+
+================================================================================
+ETAPE 8 : CODES D'ERREUR COURANTS
+================================================================================
+
+401 Unauthorized : Token invalide ou manquant
+404 Not Found : Ressource n'existe pas (ex: user_id inexistant)
+409 Conflict : Email deja utilise
+422 Unprocessable Entity : Donnees invalides (ex: email mal forme)
+
+================================================================================
+ETAPE 9 : COMMANDES UTILES
+================================================================================
+
+Voir les conteneurs actifs :
+   docker ps
+
+Voir tous les conteneurs :
+   docker ps -a
+
+Voir les logs d'un service :
+   docker logs auth_service
+   docker logs user_service
+
+Arreter tous les services :
+   docker compose down
+
+Redemarrer un service :
+   docker compose restart auth-service
+
+Executer une commande dans un conteneur :
+   docker exec -it auth_service /bin/sh
+
+Supprimer les bases de donnees (pour reinitialiser) :
+   docker compose down -v
+
+================================================================================
+ETAPE 10 : TESTER SANS DOCKER (LOCAL)
+================================================================================
+
+Si Docker ne fonctionne pas, vous pouvez lancer les services localement :
+
+Terminal 1 - Auth Service :
+   cd auth-service
+   poetry install
+   poetry run python init_db.py
+   poetry run uvicorn auth_service.main:app --port 8001 --reload
+
+Terminal 2 - User Service :
+   cd user-service
+   poetry install
+   poetry run python init_db.py
+   poetry run uvicorn user_service.main:app --port 8002 --reload
+
+================================================================================
+RESUME RAPIDE
+================================================================================
+
+1. Demarrer : docker compose up auth-service user-service --build -d
+2. Initialiser : docker exec -it auth_service python init_db.py
+                 docker exec -it user_service python init_db.py
+3. Tester user-service : http://localhost:8002/docs
+4. Tester auth-service : http://localhost:8001/docs
+5. Login avec : admin@example.com / Admin@123
+
+IMPORTANT : Les deux services sont independants. Un user cree dans user-service
+ne peut PAS se connecter dans auth-service (bases separees).
+
+================================================================================

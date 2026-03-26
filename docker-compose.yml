@@ -7,7 +7,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./api-gateway:/src
+      - ./api-gateway:/app
 
   auth-service:
     build:
@@ -17,7 +17,9 @@ services:
     ports:
       - "8001:8001"
     volumes:
-      - ./auth-service:/src
+      - ./auth-service:/app
+    depends_on:
+      - user-service
 
   user-service:
     build:
@@ -27,7 +29,7 @@ services:
     ports:
       - "8002:8002"
     volumes:
-      - ./user-service:/src
+      - ./user-service:/app
 
   reservation-service:
     build:
@@ -37,7 +39,7 @@ services:
     ports:
       - "8003:8003"
     volumes:
-      - ./reservation-service:/src
+      - ./reservation-service:/app
 
   paiement-service:
     build:
@@ -47,7 +49,7 @@ services:
     ports:
       - "8004:8004"
     volumes:
-      - ./paiement-service:/src
+      - ./paiement-service:/app
 
   test:
     build:
@@ -55,7 +57,7 @@ services:
       dockerfile: Dockerfile.test
     container_name: microservices_tests
     volumes:
-      - ./${TEST_SERVICE:-api-gateway}:/src
-      - ./htmlcov:/src/htmlcov
+      - ./${TEST_SERVICE:-api-gateway}:/app
+      - ./htmlcov:/app/htmlcov
     environment:
-      - PYTHONPATH=/src
+      - PYTHONPATH=/app

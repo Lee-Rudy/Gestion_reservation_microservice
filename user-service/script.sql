@@ -1,0 +1,9 @@
+-- user-service
+CREATE TABLE users (
+    id int PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    role ENUM('USER','ADMIN') DEFAULT 'USER',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
