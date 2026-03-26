@@ -1,5 +1,6 @@
 from reservation_service.domain.reservation.reservation import Reservation
 from reservation_service.domain.reservation.reservation_repository import ReservationRepository
+from reservation_service.domain.reservation.reservation_status import ReservationStatus
 
 class ReservationService:
     def __init__(self, repository: ReservationRepository):
@@ -24,3 +25,16 @@ class ReservationService:
             return False
         self.repository.delete(id)
         return True
+        
+    def confirm_reservation(self, id: int) -> Reservation:
+        reservation = self.repository.find_by_id(id)
+
+        if not reservation:
+            raise ValueError("Réservation non trouvée")
+
+        if reservation.status != ReservationStatus.PENDING:
+            raise ValueError("La réservation doit être en attente pour être confirmée")
+
+        reservation.status = ReservationStatus.CONFIRMED
+
+        return self.repository.save(reservation)

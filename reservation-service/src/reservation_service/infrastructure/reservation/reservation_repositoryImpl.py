@@ -44,8 +44,8 @@ class ReservationRepositoryImpl(ReservationRepository):
                 reservation.start_date,
                 reservation.end_date,
                 reservation.status.value,
-                reservation.id,
-                reservation.nb_persons
+                reservation.nb_persons,
+                reservation.id
             ))
             conn.commit()
         cursor.close()
@@ -98,3 +98,29 @@ class ReservationRepositoryImpl(ReservationRepository):
         )
         reservation.id = result["id"]
         return reservation
+    
+    def update(self, id: int, reservation: Reservation):
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        query = """
+        UPDATE reservations
+        SET user_id=%s, category_id=%s, start_date=%s, end_date=%s, status=%s, nb_persons=%s
+        WHERE id=%s
+        """
+        cursor.execute(query, (
+            reservation.user_id,
+            reservation.category_id,
+            reservation.start_date,
+            reservation.end_date,
+            reservation.status.value,
+            reservation.nb_persons,
+            id
+        ))
+
+        conn.commit()
+
+        cursor.close()
+        conn.close()
+
+        return self.find_by_id(id)

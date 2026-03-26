@@ -103,5 +103,22 @@ def create_reservation_controller(use_case: ReservationUseCase):
             return quote
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
+        
+    # CONFIRMATION
+    @router.put("/reservations/{id}/confirm")
+    def confirm(id: int):
+        reservation = use_case.confirm_reservation(id)
+        if not reservation:
+            raise HTTPException(status_code=404, detail="Réservation non trouvée")
+        return {
+            "id": reservation.id,
+            "user_id": reservation.user_id,
+            "category_id": reservation.category_id,
+            "start_date": reservation.start_date,
+            "end_date": reservation.end_date,
+            "status": reservation.status.value,
+            "nb_persons": reservation.nb_persons
+        }
+
 
     return router
