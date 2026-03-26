@@ -6,7 +6,6 @@ sur l'entité, sans infrastructure externe.
 """
 
 from decimal import Decimal
-from uuid import uuid4
 
 import pytest
 
@@ -23,7 +22,7 @@ from paiement_service.domain.entities.paiement import (
 def _paiement_en_attente() -> Paiement:
     """Crée un paiement EN_ATTENTE avec des valeurs par défaut."""
     return Paiement(
-        reservation_id=uuid4(),
+        reservation_id=1,
         montant=Decimal("50.00"),
         devise="EUR",
         methode=MethodePaiement.CARTE,
@@ -48,7 +47,7 @@ def test_creation_paiement_genere_id_unique() -> None:
 
 def test_creation_paiement_conserve_les_valeurs() -> None:
     """Les attributs fournis sont bien conservés après création."""
-    reservation_id = uuid4()
+    reservation_id = 42
     paiement = Paiement(
         reservation_id=reservation_id,
         montant=Decimal("123.45"),

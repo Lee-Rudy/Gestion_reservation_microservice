@@ -13,7 +13,7 @@ USE paiement_db;
 
 CREATE TABLE IF NOT EXISTS paiements (
     id             CHAR(36)     NOT NULL,
-    reservation_id CHAR(36)     NOT NULL,
+    reservation_id INT          NOT NULL,
     montant        DECIMAL(10,2) NOT NULL,
     devise         CHAR(3)      NOT NULL,
     methode        VARCHAR(50)  NOT NULL,

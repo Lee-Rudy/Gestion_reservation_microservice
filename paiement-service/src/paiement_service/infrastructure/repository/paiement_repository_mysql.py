@@ -87,7 +87,7 @@ class PaiementRepositoryMySQL(IPaiementRepository):
                 query,
                 (
                     str(paiement.id),
-                    str(paiement.reservation_id),
+                    paiement.reservation_id,
                     str(paiement.montant),
                     paiement.devise,
                     paiement.methode.value,
@@ -123,7 +123,7 @@ class PaiementRepositoryMySQL(IPaiementRepository):
 
         paiement = Paiement(
             id=UUID(row["id"]),
-            reservation_id=UUID(row["reservation_id"]),
+            reservation_id=int(row["reservation_id"]),
             montant=Decimal(str(row["montant"])),
             devise=row["devise"],
             methode=MethodePaiement(row["methode"]),

@@ -53,7 +53,7 @@ class Paiement:
         updated_at: Horodatage de la dernière modification (UTC).
     """
 
-    reservation_id: UUID
+    reservation_id: int
     montant: Decimal
     devise: str
     methode: MethodePaiement

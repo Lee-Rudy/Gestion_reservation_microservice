@@ -7,7 +7,7 @@ Ces tests vérifient la logique d'application, pas les détails d'entité.
 """
 
 from decimal import Decimal
-from uuid import uuid4
+from uuid import uuid4  # conservé pour paiement_id uniquement
 
 import pytest
 
@@ -42,7 +42,7 @@ def _commande_base(
 ) -> CommandeInitierPaiement:
     """Crée une commande d'initiation avec des valeurs par défaut."""
     return CommandeInitierPaiement(
-        reservation_id=uuid4(),
+        reservation_id=1,
         montant=montant,
         devise=devise,
         methode=methode,

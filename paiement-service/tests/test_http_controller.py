@@ -57,7 +57,7 @@ def client_remboursement_ko() -> TestClient:
 def _payload_base(montant: str = "99.99", devise: str = "EUR") -> dict:
     """Corps JSON valide pour créer un paiement."""
     return {
-        "reservation_id": str(uuid4()),
+        "reservation_id": 1,
         "montant": montant,
         "devise": devise,
         "methode": "carte",
@@ -78,7 +78,7 @@ class TestInitierPaiement:
 
     def test_retourne_les_valeurs_envoyees(self, client: TestClient) -> None:
         """Les données de la réponse doivent correspondre à la requête."""
-        reservation_id = str(uuid4())
+        reservation_id = 42
         payload = {
             "reservation_id": reservation_id,
             "montant": "150.00",
@@ -87,7 +87,7 @@ class TestInitierPaiement:
         }
         response = client.post("/paiements/", json=payload)
         data = response.json()
-        assert data["reservation_id"] == reservation_id
+        assert data["reservation_id"] == reservation_id  # int comparé à int
         assert data["montant"] == "150.00"
         assert data["devise"] == "USD"
         assert data["methode"] == "paypal"

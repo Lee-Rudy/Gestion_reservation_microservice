@@ -36,7 +36,7 @@ from paiement_service.domain.services.paiement_service import PaiementDomainServ
 class CommandeInitierPaiement:
     """Données nécessaires pour initier un nouveau paiement."""
 
-    reservation_id: UUID
+    reservation_id: int
     montant: Decimal
     devise: str
     methode: MethodePaiement

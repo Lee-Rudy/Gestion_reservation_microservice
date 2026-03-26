@@ -50,8 +50,8 @@ from paiement_service.domain.services.paiement_service import PaiementDomainServ
 class RequeteInitierPaiement(BaseModel):
     """Corps JSON attendu pour créer un paiement."""
 
-    reservation_id: UUID = Field(
-        ..., description="Identifiant UUID de la réservation à payer"
+    reservation_id: int = Field(
+        ..., description="Identifiant entier de la réservation à payer"
     )
     montant: Decimal = Field(..., gt=0, description="Montant à payer (ex : 49.99)")
     devise: str = Field(
@@ -67,7 +67,7 @@ class ReponsePaiement(BaseModel):
     """Représentation JSON d'un paiement renvoyée par l'API."""
 
     id: UUID
-    reservation_id: UUID
+    reservation_id: int
     montant: Decimal
     devise: str
     methode: MethodePaiement
