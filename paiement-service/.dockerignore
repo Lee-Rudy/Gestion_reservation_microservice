@@ -1,0 +1,14 @@
+# Exclure le virtualenv local — il ne doit pas être copié dans l'image Docker.
+# Sans ce fichier, Poetry détecte le .venv local et l'utilise au lieu
+# d'installer le package correctement dans l'environnement cible.
+.venv
+
+# Artifacts de test et coverage
+htmlcov
+.pytest_cache
+.coverage
+
+# Cache Python
+__pycache__
+*.pyc
+*.pyo

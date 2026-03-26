@@ -1,7 +1,7 @@
-import mysql.connector
 from reservation_service.infrastructure.database.database import get_connection
 from reservation_service.domain.category.category_repository import CategoryRepository
 from reservation_service.domain.category.category import Category
+
 
 class CategoryRepositoryImpl(CategoryRepository):
 
@@ -49,9 +49,7 @@ class CategoryRepositoryImpl(CategoryRepository):
         cursor.close()
         conn.close()
 
-        return [
-            Category(r["name"], r["description"], r["id"]) for r in results
-        ]
+        return [Category(r["name"], r["description"], r["id"]) for r in results]
 
     def update(self, id: int, category: Category):
         conn = get_connection()
@@ -76,10 +74,10 @@ class CategoryRepositoryImpl(CategoryRepository):
 
         cursor.execute("DELETE FROM categories WHERE id=%s", (id,))
         conn.commit()
-       
-        deleted = cursor.rowcount > 0 
-        
+
+        deleted = cursor.rowcount > 0
+
         cursor.close()
         conn.close()
-        
-        return deleted  
+
+        return deleted

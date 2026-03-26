@@ -1,6 +1,11 @@
 from reservation_service.application.reservation.quote_service import QuoteService
+<<<<<<< HEAD
 from reservation_service.domain.reservation.reservation import Reservation
 from reservation_service.domain.reservation.reservation_status import ReservationStatus
+=======
+
+
+>>>>>>> origin/feature/saga
 class ReservationUseCase:
     def __init__(self, reservation_service, category_repository):
         self.reservation_service = reservation_service
@@ -30,6 +35,9 @@ class ReservationUseCase:
             raise ValueError("Category not found")
 
         return self.quote_service.generate_quote(reservation, category_name)
+<<<<<<< HEAD
 
     def confirm_reservation(self, id):
         return self.reservation_service.confirm_reservation(id)
+=======
+>>>>>>> origin/feature/saga

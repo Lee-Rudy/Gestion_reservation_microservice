@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from reservation_service.domain.category.category import Category
 
+
 class CategoryRepository(ABC):
 
     @abstractmethod
