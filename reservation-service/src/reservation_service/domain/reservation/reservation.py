@@ -13,12 +13,14 @@ class Reservation:
         end_date: str,
         status: ReservationStatus = ReservationStatus.PENDING,
         expires_at: str = None,
+        nb_persons: int = 1
     ):
         self._validate_user_id(user_id)
         self._validate_category_id(category_id)
         self._validate_dates(start_date, end_date)
         self._validate_status(status)
         self._validate_expires_at(expires_at)
+        self._validate_nb_persons(nb_persons)
 
         self.id = id
         self.user_id = user_id
@@ -27,6 +29,7 @@ class Reservation:
         self.end_date = end_date
         self.status = status
         self.expires_at = expires_at
+        self.nb_persons = nb_persons
 
     def _validate_user_id(self, user_id: int):
         if not isinstance(user_id, int) or user_id <= 0:
@@ -36,6 +39,9 @@ class Reservation:
         if not isinstance(category_id, int) or category_id <= 0:
             raise ValueError("L'ID de la catégorie doit être un entier positif")
 
+    def _validate_nb_persons(self, nb_persons: int):
+        if not isinstance(nb_persons, int) or nb_persons <= 0:
+            raise ValueError("Le nombre de personnes doit être un entier positif")
 
     def _validate_dates(self, start_date, end_date):
         if not start_date or not end_date:

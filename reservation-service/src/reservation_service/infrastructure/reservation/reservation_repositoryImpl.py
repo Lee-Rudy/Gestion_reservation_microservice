@@ -19,22 +19,23 @@ class ReservationRepositoryImpl(ReservationRepository):
         
         if reservation.id is None:
             query = """
-            INSERT INTO reservations (user_id, category_id, start_date, end_date, status)
-            VALUES (%s, %s, %s, %s, %s)
+            INSERT INTO reservations (user_id, category_id, start_date, end_date, status, nb_persons)
+            VALUES (%s, %s, %s, %s, %s, %s)
             """
             cursor.execute(query, (
                 reservation.user_id,
                 reservation.category_id,
                 reservation.start_date,
                 reservation.end_date,
-                reservation.status.value
+                reservation.status.value,
+                reservation.nb_persons
             ))
             conn.commit()
             reservation.id = cursor.lastrowid
         else:
             query = """
             UPDATE reservations
-            SET user_id=%s, category_id=%s, start_date=%s, end_date=%s, status=%s
+            SET user_id=%s, category_id=%s, start_date=%s, end_date=%s, status=%s, nb_persons=%s
             WHERE id=%s
             """
             cursor.execute(query, (
@@ -43,7 +44,8 @@ class ReservationRepositoryImpl(ReservationRepository):
                 reservation.start_date,
                 reservation.end_date,
                 reservation.status.value,
-                reservation.id
+                reservation.id,
+                reservation.nb_persons
             ))
             conn.commit()
         cursor.close()
@@ -91,7 +93,8 @@ class ReservationRepositoryImpl(ReservationRepository):
             category_id=result["category_id"],
             start_date=result["start_date"],
             end_date=result["end_date"],
-            status=ReservationStatus(result["status"])
+            status=ReservationStatus(result["status"]),
+            nb_persons=result["nb_persons"]
         )
         reservation.id = result["id"]
         return reservation

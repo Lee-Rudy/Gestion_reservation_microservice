@@ -15,7 +15,7 @@ repository = CategoryRepositoryImpl()
 use_case = CategoryUseCase(repository)
 reservation_repository = ReservationRepositoryImpl()
 reservation_service = ReservationService(reservation_repository)
-reservation_use_case = ReservationUseCase(reservation_service)
+reservation_use_case = ReservationUseCase(reservation_service, repository)
 
 # register route
 app.include_router(create_category_controller(use_case))
