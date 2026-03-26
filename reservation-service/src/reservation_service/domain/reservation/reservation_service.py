@@ -33,13 +33,14 @@ class ReservationService:
         self.repository.delete(id)
         return True
 
-    def confirm_reservation(self, id: int) -> None:
-        """Passe une réservation au statut CONFIRMED.
-
-        Appelé par le Saga quand le paiement est validé avec succès.
-        Utilise update_status pour éviter de re-valider les dates.
-        """
-        self.repository.update_status(id, ReservationStatus.CONFIRMED)
+    def confirm_reservation(self, id: int) -> Reservation:
+        reservation = self.repository.find_by_id(id)
+        if not reservation:
+            raise ValueError("Réservation non trouvée")
+        if reservation.status != ReservationStatus.PENDING:
+            raise ValueError("La réservation doit être en attente pour être confirmée")
+        reservation.status = ReservationStatus.CONFIRMED
+        return self.repository.save(reservation)
 
     def cancel_reservation(self, id: int) -> None:
         """Passe une réservation au statut CANCELLED (rollback Saga).
