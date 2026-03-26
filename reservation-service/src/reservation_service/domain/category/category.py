@@ -13,10 +13,14 @@ class Category:
             raise ValueError("Le nom de la catégorie est requis")
 
         if len(name.strip()) < 3:
-            raise ValueError("Le nom de la catégorie doit contenir au moins 3 caractères")
+            raise ValueError(
+                "Le nom de la catégorie doit contenir au moins 3 caractères"
+            )
 
         if len(name.strip()) > 100:
-            raise ValueError("Le nom de la catégorie doit contenir moins de 100 caractères")
+            raise ValueError(
+                "Le nom de la catégorie doit contenir moins de 100 caractères"
+            )
 
     def _validate_description(self, description: str):
         if description and len(description.strip()) > 100:

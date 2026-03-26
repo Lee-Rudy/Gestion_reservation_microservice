@@ -13,7 +13,7 @@ class Reservation:
         end_date: str,
         status: ReservationStatus = ReservationStatus.PENDING,
         expires_at: str = None,
-        nb_persons: int = 1
+        nb_persons: int = 1,
     ):
         self._validate_user_id(user_id)
         self._validate_category_id(category_id)

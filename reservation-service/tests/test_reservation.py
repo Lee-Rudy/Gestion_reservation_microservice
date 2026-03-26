@@ -71,9 +71,13 @@ END = "2030-06-03T10:00:00"
 
 def _build_reservation(**kwargs) -> Reservation:
     defaults = dict(
-        id=None, user_id=1, category_id=1,
-        start_date=START, end_date=END,
-        status=ReservationStatus.PENDING, nb_persons=2,
+        id=None,
+        user_id=1,
+        category_id=1,
+        start_date=START,
+        end_date=END,
+        status=ReservationStatus.PENDING,
+        nb_persons=2,
     )
     defaults.update(kwargs)
     return Reservation(**defaults)
@@ -86,6 +90,7 @@ def _build_client() -> TestClient:
     appel (le router est module-level dans le code de Christina).
     """
     import reservation_service.adapters.reservation.reservation_controller as mod
+
     importlib.reload(mod)
     app = FastAPI()
     repo = ReservationRepositoryInMemory()
@@ -124,7 +129,9 @@ class TestReservationEntity:
 
     def test_date_debut_apres_fin(self):
         with pytest.raises(ValueError, match="antérieure"):
-            _build_reservation(start_date="2030-06-03T10:00:00", end_date="2030-06-01T10:00:00")
+            _build_reservation(
+                start_date="2030-06-03T10:00:00", end_date="2030-06-01T10:00:00"
+            )
 
     def test_statut_invalide(self):
         with pytest.raises(ValueError, match="statut"):
@@ -154,7 +161,9 @@ class TestReservationService:
 
     def test_update_reservation(self):
         r = self.service.create_reservation(_build_reservation())
-        updated = self.service.update_reservation(r.id, _build_reservation(nb_persons=5))
+        updated = self.service.update_reservation(
+            r.id, _build_reservation(nb_persons=5)
+        )
         assert updated.nb_persons == 5
 
     def test_update_reservation_inexistante(self):
@@ -218,8 +227,11 @@ class TestReservationController:
 
     def _payload(self, **kwargs) -> dict:
         base = {
-            "user_id": 1, "category_id": 1,
-            "start_date": START, "end_date": END, "nb_persons": 2,
+            "user_id": 1,
+            "category_id": 1,
+            "start_date": START,
+            "end_date": END,
+            "nb_persons": 2,
         }
         base.update(kwargs)
         return base

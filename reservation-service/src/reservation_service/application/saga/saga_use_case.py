@@ -73,9 +73,7 @@ class SagaReservationPaiementUseCase:
             # On récupère le nom de la catégorie pour le calcul tarifaire.
             category = self.category_repository.find_by_id(reservation.category_id)
             if not category:
-                raise ValueError(
-                    f"Catégorie {reservation.category_id} introuvable."
-                )
+                raise ValueError(f"Catégorie {reservation.category_id} introuvable.")
             quote = self.quote_service.generate_quote(reservation, category.name)
             montant = str(quote["amount"])
 

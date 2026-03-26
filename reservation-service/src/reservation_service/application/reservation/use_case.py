@@ -1,5 +1,6 @@
 from reservation_service.application.reservation.quote_service import QuoteService
 
+
 class ReservationUseCase:
     def __init__(self, reservation_service, category_repository):
         self.reservation_service = reservation_service
@@ -17,12 +18,12 @@ class ReservationUseCase:
 
     def delete_reservation(self, id):
         return self.reservation_service.delete_reservation(id)
-    
-    def generate_quote(self, id:int):
+
+    def generate_quote(self, id: int):
         reservation = self.reservation_service.get_reservation(id)
         if not reservation:
             raise ValueError("Reservation not found")
-        
+
         category = self.category_repository.find_by_id(reservation.category_id)
         category_name = category.name if category else None
         if not category:

@@ -1,9 +1,10 @@
 from datetime import datetime
 
+
 class QuoteService:
 
     def generate_quote(self, reservation, category_name: str):
-        
+
         start = reservation.start_date
         end = reservation.end_date
 
@@ -20,7 +21,7 @@ class QuoteService:
             amount = nights * 100
 
         elif category_name == "restaurant":
-            amount = reservation.nb_persons * 20 
+            amount = reservation.nb_persons * 20
 
         elif category_name == "salle":
             hours = (end - start).total_seconds() / 3600
@@ -32,5 +33,5 @@ class QuoteService:
         return {
             "reservation_id": reservation.id,
             "amount": round(amount, 2),
-            "currency": "EUR"
+            "currency": "EUR",
         }

@@ -68,6 +68,7 @@ def _build_client() -> TestClient:
     par main.py au démarrage prendraient la priorité.
     """
     import reservation_service.adapters.category.category_controller as mod
+
     importlib.reload(mod)
     app = FastAPI()
     repo = CategoryRepositoryInMemory()
