@@ -55,11 +55,8 @@ services:
     ports:
       - "3306:3306"
     volumes:
-<<<<<<< HEAD
       - ./reservation-service:/app
-=======
       - mysql-data:/var/lib/mysql
->>>>>>> ec83ed0065a9471fd4c882a775a741ff7a19a37e
 
   paiement-service:
     build:
@@ -80,11 +77,8 @@ services:
       - ./${TEST_SERVICE:-api-gateway}:/app
       - ./htmlcov:/app/htmlcov
     environment:
-<<<<<<< HEAD
       - PYTHONPATH=/app
-=======
       - PYTHONPATH=/src
 
 volumes:
   mysql-data:
->>>>>>> ec83ed0065a9471fd4c882a775a741ff7a19a37e
