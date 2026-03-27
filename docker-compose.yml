@@ -68,6 +68,20 @@ services:
     volumes:
       - ./paiement-service:/app
 
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    container_name: front
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./front/pages:/app/pages
+      - ./front/public:/app/public
+      - ./front/styles:/app/styles
+    depends_on:
+      - api
+
   test:
     build:
       context: ./${TEST_SERVICE:-api-gateway}
