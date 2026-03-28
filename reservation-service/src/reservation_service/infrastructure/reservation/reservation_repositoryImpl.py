@@ -24,13 +24,13 @@ class ReservationRepositoryImpl(ReservationRepository):
         if reservation.id is None:
             query = """
             INSERT INTO reservations
-            (user_id, category_id, start_date, end_date, status, nb_persons)
+            (user_email, category_id, start_date, end_date, status, nb_persons)
             VALUES (%s, %s, %s, %s, %s, %s)
             """
             cursor.execute(
                 query,
                 (
-                    reservation.user_id,
+                    reservation.user_email,
                     reservation.category_id,
                     reservation.start_date,
                     reservation.end_date,
@@ -43,12 +43,12 @@ class ReservationRepositoryImpl(ReservationRepository):
         else:
             query = """
             UPDATE reservations
-            SET user_id=%s, category_id=%s, start_date=%s, end_date=%s,
+            SET user_email=%s, category_id=%s, start_date=%s, end_date=%s,
             status=%s, nb_persons=%s
             WHERE id=%s
             """
             cursor.execute(query, (
-                reservation.user_id,
+                reservation.user_email,
                 reservation.category_id,
                 reservation.start_date,
                 reservation.end_date,
@@ -115,7 +115,7 @@ class ReservationRepositoryImpl(ReservationRepository):
 
         reservation = Reservation(
             id=result["id"],
-            user_id=result["user_id"],
+            user_email=result["user_email"],
             category_id=result["category_id"],
             start_date=result["start_date"],
             end_date=result["end_date"],
@@ -131,11 +131,11 @@ class ReservationRepositoryImpl(ReservationRepository):
 
         query = """
         UPDATE reservations
-        SET user_id=%s, category_id=%s, start_date=%s, end_date=%s, status=%s, nb_persons=%s
+        SET user_email=%s, category_id=%s, start_date=%s, end_date=%s, status=%s, nb_persons=%s
         WHERE id=%s
         """
         cursor.execute(query, (
-            reservation.user_id,
+            reservation.user_email,
             reservation.category_id,
             reservation.start_date,
             reservation.end_date,

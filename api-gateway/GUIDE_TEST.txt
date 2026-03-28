@@ -49,6 +49,19 @@ ETAPE 3 : TESTER USER-SERVICE (PORT 8002)
 
 Ouvrir dans le navigateur : http://localhost:8002/docs
 
+
+Créer une reservation 
+
+{
+  "user_email": "admin@example.com",
+  "category_id": 1,
+  "start_date": "2026-04-01T14:00:00",
+  "end_date": "2026-04-05T11:00:00",
+  "nb_persons": 2,
+  "methode": "carte",
+  "devise": "EUR"
+}
+
 3.1 - LISTER LES UTILISATEURS
 ------------------------------
 1. Cliquer sur "GET /users/"

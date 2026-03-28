@@ -9,9 +9,33 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) return alert("Champs requis");
-    alert("Connexion réussie (mock)");
+    
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        return alert(error.message || "Erreur de connexion");
+      }
+
+      const data = await response.json();
+      localStorage.setItem("token", data.access_token);
+      localStorage.setItem("user", JSON.stringify({ email, role: data.role }));
+      
+      if (data.role === "ADMIN") {
+        window.location.href = "/admin";
+      } else {
+        window.location.href = "/reservation";
+      }
+    } catch (error) {
+      alert("Erreur de connexion");
+    }
   };
 
   return (

@@ -6,7 +6,7 @@ class Reservation:
     def __init__(
         self,
         id: int | None,
-        user_id: int,
+        user_email: str,
         category_id: int,
         start_date: str,
         end_date: str,
@@ -14,7 +14,7 @@ class Reservation:
         expires_at: str | None = None,
         nb_persons: int = 1,
     ):
-        self._validate_user_id(user_id)
+        self._validate_user_email(user_email)
         self._validate_category_id(category_id)
         self._validate_dates(start_date, end_date)
         self._validate_status(status)
@@ -22,7 +22,7 @@ class Reservation:
         self._validate_nb_persons(nb_persons)
 
         self.id = id
-        self.user_id = user_id
+        self.user_email = user_email
         self.category_id = category_id
         self.start_date = start_date
         self.end_date = end_date
@@ -30,9 +30,9 @@ class Reservation:
         self.expires_at = expires_at
         self.nb_persons = nb_persons
 
-    def _validate_user_id(self, user_id: int):
-        if not isinstance(user_id, int) or user_id <= 0:
-            raise ValueError("L'ID de l'utilisateur doit être un entier positif")
+    def _validate_user_email(self, user_email: str):
+        if not isinstance(user_email, str) or not user_email or "@" not in user_email:
+            raise ValueError("L'email utilisateur doit être valide")
 
     def _validate_category_id(self, category_id: int):
         if not isinstance(category_id, int) or category_id <= 0:

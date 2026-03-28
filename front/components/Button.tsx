@@ -4,6 +4,7 @@ type Props = {
   type?: "button" | "submit";
   variant?: "primary" | "outline";
   className?: string;
+  disabled?: boolean;
 };
 
 export default function Button({
@@ -12,6 +13,7 @@ export default function Button({
   type = "button",
   variant = "primary",
   className = "",
+  disabled = false,
 }: Props) {
   const base = "px-4 py-2 rounded-lg transition font-semibold";
 
@@ -24,7 +26,8 @@ export default function Button({
     <button
       type={type}
       onClick={onClick}
-      className={`${base} ${variants[variant]} ${className}`}
+      disabled={disabled}
+      className={`${base} ${variants[variant]} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
       {children}
     </button>

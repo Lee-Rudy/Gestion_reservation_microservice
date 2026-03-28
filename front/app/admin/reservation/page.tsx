@@ -1,23 +1,53 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-type Reservation = {
+interface Reservation {
   id: number;
-  client: string;
-  date: string;
-  status: "confirmé" | "en attente" | "annulé";
-};
+  user_email: string;
+  category_name?: string;
+  start_date: string;
+  end_date: string;
+  status: string;
+  nb_persons: number;
+}
 
 export default function ReservationsPage() {
-  const reservations: Reservation[] = Array.from({ length: 25 }, (_, i) => ({
-    id: i + 1,
-    client: `Client ${i + 1}`,
-    date: `2026-03-${(i % 30) + 1}`,
-    status: i % 3 === 0 ? "confirmé" : i % 3 === 1 ? "en attente" : "annulé",
-  }));
-
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const router = useRouter();
   const itemsPerPage = 10;
+
+  useEffect(() => {
+    loadReservations();
+  }, []);
+
+  const loadReservations = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      const response = await fetch("/api/reservations", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) {
+        alert("Erreur lors du chargement des réservations");
+        return;
+      }
+
+      const data = await response.json();
+      setReservations(data);
+    } catch (error) {
+      alert("Erreur lors du chargement des réservations");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const paged = reservations.slice(
     (page - 1) * itemsPerPage,
@@ -25,6 +55,23 @@ export default function ReservationsPage() {
   );
 
   const totalPages = Math.ceil(reservations.length / itemsPerPage);
+
+  const getStatusLabel = (status: string) => {
+    const statusMap: Record<string, string> = {
+      CONFIRMED: "confirmé",
+      PENDING: "en attente",
+      CANCELLED: "annulé",
+    };
+    return statusMap[status] || status.toLowerCase();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-400">Chargement...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -37,22 +84,34 @@ export default function ReservationsPage() {
               <tr>
                 <th className="p-3 text-left">ID</th>
                 <th className="p-3 text-left">Client</th>
-                <th className="p-3 text-left">Date</th>
+                <th className="p-3 text-left">Catégorie</th>
+                <th className="p-3 text-left">Date début</th>
+                <th className="p-3 text-left">Personnes</th>
                 <th className="p-3 text-left">Status</th>
               </tr>
             </thead>
 
             <tbody>
-              {paged.map((r) => (
-                <tr key={r.id} className="border-t border-neutral-800 hover:bg-black/30">
-                  <td className="p-3">{r.id}</td>
-                  <td className="p-3">{r.client}</td>
-                  <td className="p-3">{r.date}</td>
-                  <td className="p-3">
-                    <StatusBadge value={r.status} />
+              {paged.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="p-3 text-center text-gray-400">
+                    Aucune réservation
                   </td>
                 </tr>
-              ))}
+              ) : (
+                paged.map((r) => (
+                  <tr key={r.id} className="border-t border-neutral-800 hover:bg-black/30">
+                    <td className="p-3">{r.id}</td>
+                    <td className="p-3">{r.user_email}</td>
+                    <td className="p-3">{r.category_name || "N/A"}</td>
+                    <td className="p-3">{new Date(r.start_date).toLocaleString()}</td>
+                    <td className="p-3">{r.nb_persons}</td>
+                    <td className="p-3">
+                      <StatusBadge value={getStatusLabel(r.status)} />
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

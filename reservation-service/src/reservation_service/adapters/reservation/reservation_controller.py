@@ -6,12 +6,12 @@ from reservation_service.domain.reservation.reservation_status import Reservatio
 
 # Pydantic model avec Enum pour status
 class ReservationController(BaseModel):
-    user_id: int
+    user_email: str
     category_id: int
     start_date: str
     end_date: str
-    status: ReservationStatus = ReservationStatus.PENDING  # Enum directement
-    nb_persons: int = 1  # Nouveau champ pour le nombre de personnes
+    status: ReservationStatus = ReservationStatus.PENDING
+    nb_persons: int = 1
 
 def create_reservation_controller(use_case: ReservationUseCase):
     router = APIRouter()
@@ -22,22 +22,22 @@ def create_reservation_controller(use_case: ReservationUseCase):
         try:
             reservation_obj = Reservation(
                 id=None,
-                user_id=reservation_request.user_id,
+                user_email=reservation_request.user_email,
                 category_id=reservation_request.category_id,
                 start_date=reservation_request.start_date,
                 end_date=reservation_request.end_date,
-                status=reservation_request.status,  # Enum déjà validé par Pydantic
-                nb_persons=reservation_request.nb_persons  # Inclure le nombre de personnes
+                status=reservation_request.status,
+                nb_persons=reservation_request.nb_persons
             )
             reservation = use_case.create_reservation(reservation_obj)
             return {
                 "id": reservation.id,
-                "user_id": reservation.user_id,
+                "user_email": reservation.user_email,
                 "category_id": reservation.category_id,
                 "start_date": reservation.start_date,
                 "end_date": reservation.end_date,
-                "status": reservation.status.value,  # Retourne le string pour Swagger
-                "nb_persons": reservation.nb_persons  # Inclure le nombre de personnes dans la réponse
+                "status": reservation.status.value,
+                "nb_persons": reservation.nb_persons
             }
         except ValueError as e:
             raise HTTPException(status_code=400, detail=str(e))
@@ -50,7 +50,7 @@ def create_reservation_controller(use_case: ReservationUseCase):
             raise HTTPException(status_code=404, detail="Réservation non trouvée")
         return {
             "id": reservation.id,
-            "user_id": reservation.user_id,
+            "user_email": reservation.user_email,
             "category_id": reservation.category_id,
             "start_date": reservation.start_date,
             "end_date": reservation.end_date,
@@ -64,7 +64,7 @@ def create_reservation_controller(use_case: ReservationUseCase):
         try:
             reservation_obj = Reservation(
                 id=id,
-                user_id=reservation_request.user_id,
+                user_email=reservation_request.user_email,
                 category_id=reservation_request.category_id,
                 start_date=reservation_request.start_date,
                 end_date=reservation_request.end_date,
@@ -76,7 +76,7 @@ def create_reservation_controller(use_case: ReservationUseCase):
                 raise HTTPException(status_code=404, detail="Réservation non trouvée")
             return {
                 "id": updated.id,
-                "user_id": updated.user_id,
+                "user_email": updated.user_email,
                 "category_id": updated.category_id,
                 "start_date": updated.start_date,
                 "end_date": updated.end_date,
@@ -111,7 +111,7 @@ def create_reservation_controller(use_case: ReservationUseCase):
             raise HTTPException(status_code=404, detail="Réservation non trouvée")
         return {
             "id": reservation.id,
-            "user_id": reservation.user_id,
+            "user_email": reservation.user_email,
             "category_id": reservation.category_id,
             "start_date": reservation.start_date,
             "end_date": reservation.end_date,

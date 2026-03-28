@@ -35,11 +35,15 @@ def create_category_controller(use_case: CategoryUseCase):
     # READ ALL
     @router.get("/categories")
     def get_all():
-        categories = use_case.get_all_categories()
-        return [
-            {"id": c.id, "name": c.name, "description": c.description}
-            for c in categories
-        ]
+        from reservation_service.infrastructure.database.database import get_connection
+        
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT id, name, description, price_per_day FROM categories")
+        categories = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return categories
 
     # READ BY ID
     @router.get("/categories/{id}")

@@ -69,3 +69,11 @@ saga_use_case = SagaReservationPaiementUseCase(
 app.include_router(create_category_controller(category_use_case))
 app.include_router(create_reservation_controller(reservation_use_case))
 app.include_router(create_saga_controller(saga_use_case))
+
+from reservation_service.adapters.logs.logs_controller import router as logs_router
+from reservation_service.adapters.reservation.get_all_controller import (
+    create_get_all_reservations_controller,
+)
+
+app.include_router(logs_router)
+app.include_router(create_get_all_reservations_controller())

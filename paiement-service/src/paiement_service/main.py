@@ -24,7 +24,7 @@ from paiement_service.adapters.repository import PaiementRepositoryEnMemoire
 from paiement_service.application.ports import IPaiementRepository
 
 app = FastAPI(
-    title="gestion_microservice",
+    title="paiement_microservice",
     version="0.1.0",
     description="Service de gestion des paiements — Architecture Hexagonale",
 )

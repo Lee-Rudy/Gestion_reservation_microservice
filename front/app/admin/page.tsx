@@ -1,34 +1,85 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-type Log = {
-  correlation_id: string;
+interface Stats {
+  users: number;
+  reservations: number;
+  paiements: number;
+}
+
+interface Log {
+  id?: number;
+  user_email?: string;
   action: string;
+  details?: string;
   created_at: string;
-};
+}
 
 export default function DashboardPage() {
-  const total = 120;
-  const enAttente = 25;
-  const annulee = 10;
+  const [stats, setStats] = useState<Stats>({
+    users: 0,
+    reservations: 0,
+    paiements: 0,
+  });
+  const [logs, setLogs] = useState<Log[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-  const logs: Log[] = [
-    { correlation_id: "a1b2c3d4-e5f6-7g8h-9i10", action: "Réservation confirmée", created_at: "2026-03-26 10:00" },
-    { correlation_id: "b2c3d4e5-f6g7-8h9i-10j1", action: "Paiement validé", created_at: "2026-03-26 09:45" },
-    { correlation_id: "c3d4e5f6-g7h8-9i10-11j2", action: "Réservation annulée", created_at: "2026-03-25 16:30" },
-    { correlation_id: "d4e5f6g7-h8i9-10j11", action: "Nouvelle réservation", created_at: "2026-03-26 11:20" },
-    { correlation_id: "e5f6g7h8-i9j10-11k12", action: "Erreur paiement", created_at: "2026-03-25 15:10" },
-  ];
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        router.push("/login");
+        return;
+      }
+
+      const [statsResponse, logsResponse] = await Promise.all([
+        fetch("/api/admin/stats", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        fetch("/api/admin/logs", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+
+      if (!statsResponse.ok || !logsResponse.ok) {
+        alert("Erreur lors du chargement des données");
+        return;
+      }
+
+      const statsData = await statsResponse.json();
+      const logsData = await logsResponse.json();
+
+      setStats(statsData);
+      setLogs(logsData);
+    } catch (error) {
+      alert("Erreur lors du chargement des données");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-400">Chargement...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
 
-      {/* STATS */}
       <div className="grid grid-cols-3 gap-6">
-        <StatBlock title="Total Réservations" value={total} />
-        <StatBlock title="En attente" value={enAttente} />
-        <StatBlock title="Annulées" value={annulee} />
+        <StatBlock title="Utilisateurs" value={stats.users} />
+        <StatBlock title="Réservations" value={stats.reservations} />
+        <StatBlock title="Paiements" value={stats.paiements} />
       </div>
 
       {/* LOGS EN TABLEAU */}
@@ -38,19 +89,29 @@ export default function DashboardPage() {
           <table className="w-full text-sm text-left">
             <thead className="bg-black text-gray-400">
               <tr>
-                <th className="p-3">Correlation ID</th>
+                <th className="p-3">Utilisateur</th>
                 <th className="p-3">Action</th>
+                <th className="p-3">Details</th>
                 <th className="p-3">Date / Heure</th>
               </tr>
             </thead>
             <tbody>
-              {logs.map((log, index) => (
-                <tr key={index} className="border-t border-neutral-800 hover:bg-black/30 transition">
-                  <td className="p-3">{log.correlation_id}</td>
-                  <td className="p-3">{log.action}</td>
-                  <td className="p-3 text-gray-400">{log.created_at}</td>
+              {logs.length === 0 ? (
+                <tr>
+                  <td colSpan={4} className="p-3 text-center text-gray-400">
+                    Aucun log disponible
+                  </td>
                 </tr>
-              ))}
+              ) : (
+                logs.map((log, index) => (
+                  <tr key={index} className="border-t border-neutral-800 hover:bg-black/30 transition">
+                    <td className="p-3">{log.user_email || "Systeme"}</td>
+                    <td className="p-3">{log.action}</td>
+                    <td className="p-3 text-gray-400">{log.details || "-"}</td>
+                    <td className="p-3 text-gray-400">{new Date(log.created_at).toLocaleString()}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>

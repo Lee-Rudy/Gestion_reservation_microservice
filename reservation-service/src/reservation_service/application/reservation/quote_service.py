@@ -14,21 +14,25 @@ class QuoteService:
         if isinstance(end, str):
             end = datetime.fromisoformat(end)
 
-        if category_name == "hotel":
+        category_lower = category_name.lower()
+
+        if "hotel" in category_lower or "hôtel" in category_lower:
             nights = (end - start).days
             if nights == 0:
-                nights = 1  # Minimum 1 nuit
-            amount = nights * 100
+                nights = 1
+            amount = nights * 120
 
-        elif category_name == "restaurant":
-            amount = reservation.nb_persons * 20
+        elif "restaurant" in category_lower:
+            amount = reservation.nb_persons * 50
 
-        elif category_name == "salle":
+        elif "salle" in category_lower or "conference" in category_lower:
             hours = (end - start).total_seconds() / 3600
-            amount = hours * 50
+            if hours == 0:
+                hours = 1
+            amount = hours * 200
 
         else:
-            raise ValueError("Catégorie inconnue")
+            raise ValueError(f"Catégorie inconnue: {category_name}")
 
         return {
             "reservation_id": reservation.id,

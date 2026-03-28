@@ -4,15 +4,39 @@ import { useState } from "react";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!name || !email || !password) return alert("Champs requis");
-    alert("Compte créé (mock)");
+    
+    setLoading(true);
+    try {
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password, role: "USER" }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        alert(error.message || "Erreur lors de l'inscription");
+        return;
+      }
+
+      alert("Compte créé avec succès");
+      router.push("/login");
+    } catch (error) {
+      alert("Erreur lors de l'inscription");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -51,8 +75,9 @@ export default function Register() {
           <Button 
             onClick={handleRegister} 
             className="bg-green-500 hover:bg-green-600 text-black w-full"
+            disabled={loading}
           >
-            Créer un compte
+            {loading ? "Création..." : "Créer un compte"}
           </Button>
         </div>
 

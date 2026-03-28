@@ -8,6 +8,11 @@ services:
       - "8000:8000"
     volumes:
       - ./api-gateway:/app
+    depends_on:
+      - auth-service
+      - user-service
+      - reservation-service
+      - paiement-service
 
   auth-service:
     build:
@@ -38,25 +43,34 @@ services:
     container_name: reservation_service
     ports:
       - "8003:8003"
+    volumes:
+      - ./reservation-service:/app
     environment:
       - MYSQL_HOST=mysql
       - MYSQL_PORT=3306
       - MYSQL_USER=root
       - MYSQL_PASSWORD=root
       - MYSQL_DATABASE=reservation_db
+      - PAIEMENT_SERVICE_URL=http://paiement-service:8004
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
   mysql:
     image: mysql:8.0
+    container_name: mysql_db
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: reservation_db
     ports:
       - "3306:3306"
     volumes:
-      - ./reservation-service:/app
+      - ./init-mysql.sql:/docker-entrypoint-initdb.d/init.sql
       - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
 
   paiement-service:
     build:
@@ -67,6 +81,16 @@ services:
       - "8004:8004"
     volumes:
       - ./paiement-service:/app
+    environment:
+      - USE_DATABASE=true
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=paiement_db
+    depends_on:
+      mysql:
+        condition: service_healthy
 
   front:
     build:
@@ -75,10 +99,9 @@ services:
     container_name: front
     ports:
       - "3000:3000"
-    volumes:
-      - ./front/pages:/app/pages
-      - ./front/public:/app/public
-      - ./front/styles:/app/styles
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - API_GATEWAY_URL=http://api:8000
     depends_on:
       - api
 

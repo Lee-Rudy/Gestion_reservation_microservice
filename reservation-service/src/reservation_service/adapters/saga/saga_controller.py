@@ -27,7 +27,7 @@ class SagaRequest(BaseModel):
     """Corps JSON attendu pour déclencher le Saga."""
 
     # Données de la réservation
-    user_id: int
+    user_email: str
     category_id: int
     start_date: str
     end_date: str
@@ -58,7 +58,7 @@ def create_saga_controller(use_case: SagaReservationPaiementUseCase):
             # Construction de l'entité Reservation (id=None → INSERT)
             reservation = Reservation(
                 id=None,
-                user_id=request.user_id,
+                user_email=request.user_email,
                 category_id=request.category_id,
                 start_date=request.start_date,
                 end_date=request.end_date,
