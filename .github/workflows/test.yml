@@ -3,11 +3,9 @@ name: Test all services
 on:
   push:
     branches:
-      - main
       - develop
   pull_request:
     branches:
-      - main
       - develop
 
 jobs:
